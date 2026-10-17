@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/*
+ * G.G Metal Works design language: the engineering drawing. Graphite steel on drawing-paper white, a safety-orange
+ * accent (buttons, callouts) and hazard yellow used sparingly (the stripes on a press bed). A mono face for item
+ * numbers and spec labels, a sturdy grotesque for headlines.
+ * `accent` is dark enough for white text on it (AA); `spark` is the bright orange for decoration only.
+ */
+@theme {
+  --color-steel: #161a1f;
+  --color-brand: #2a333d;
+  --color-brand-light: #e8ebee;
+  --color-accent: #c2410c;
+  --color-accent-dark: #9a3412;
+  --color-spark: #f97316;
+  --color-sun: #f5b40f;
+  --color-paper: #f5f5f2;
+  --color-paper-dark: #ebebe6;
+  --color-line: #d9d9d2;
+  --color-ink: #15191e;
+  --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--ff-display), var(--ff-body), ui-sans-serif, sans-serif;
+  --font-mono: var(--ff-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* In the base layer so utilities (e.g. text-white on dark sections) win. */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-slate-700 antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    @apply bg-sun text-ink;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@layer components {
+  /* Small mono label for item numbers, spec labels, eyebrows. */
+  .tag {
+    @apply font-mono text-[11px] font-medium tracking-[0.18em] uppercase;
+  }
+
+  /* Drawing-sheet grid: fine 8 px lines with a stronger line every 64 px. */
+  .drawing-grid {
+    background-image:
+      linear-gradient(to right, rgb(42 51 61 / 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(42 51 61 / 0.07) 1px, transparent 1px),
+      linear-gradient(to right, rgb(42 51 61 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(42 51 61 / 0.035) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
+  }
+
+  /* Hazard stripe, as painted on press beds. */
+  .hazard {
+    background-image: repeating-linear-gradient(-45deg, var(--color-sun) 0 10px, var(--color-steel) 10px 20px);
+  }
+
+  /* Crop marks on the corners of a framed photo (drawing border). */
+  .crop-marks {
+    position: relative;
+  }
+  .crop-marks::before,
+  .crop-marks::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--color-accent);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .crop-marks::before {
+    top: -8px;
+    left: -8px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+  .crop-marks::after {
+    right: -8px;
+    bottom: -8px;
+    border-right: 2px solid;
+    border-bottom: 2px solid;
+  }
+}
+
+/* Motion: CSS only, never needed to read the page, off for people who ask for less. */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes stroke {
+  0%, 100% { transform: translateY(0); }
+  45%, 55% { transform: translateY(18px); }
+}
+
+.marquee {
+  animation: marquee 50s linear infinite;
+}
+
+.press-ram {
+  animation: stroke 2.4s cubic-bezier(.6,0,.4,1) infinite;
+}
+
+/* Logo fan blades spin while the logo is hovered. */
+@keyframes spin-fan {
+  to { transform: rotate(360deg); }
+}
+
+.fan-blades {
+  transform-origin: 50px 50px;
+}
+
+.group\/logo:hover .fan-blades {
+  animation: spin-fan 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee, .press-ram, .fan-blades { animation: none !important; }
+}
